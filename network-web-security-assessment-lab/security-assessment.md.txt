@@ -1,0 +1,130 @@
+# Network & Web Application Security Assessment of an Isolated Virtual Lab
+
+## Overview
+
+This project involved a controlled security assessment of an isolated virtual laboratory environment.
+
+Kali Linux was used as the security testing system, while Metasploitable 2 was used as the intentionally vulnerable target. The assessment covered network reconnaissance, service enumeration, vulnerability identification, controlled exploitation, and web application security testing.
+
+## Lab Environment
+
+* **Security Testing System:** Kali Linux
+* **Target:** Metasploitable 2
+* **Web Application:** DVWA
+* **Virtualization:** VMware Workstation
+* **Network:** Isolated virtual laboratory
+
+## Tools Used
+
+* Nmap
+* Metasploit Framework
+* SearchSploit
+* cURL
+* Firefox Developer Tools
+* DVWA
+* Metasploitable 2
+* VMware Workstation
+
+## 1. Network Security Assessment
+
+### Network Discovery
+
+The target system was identified at:
+
+`192.168.204.129`
+
+Connectivity was verified using ICMP ping before beginning the assessment.
+
+### Service Enumeration
+
+Nmap service and version detection was used to identify exposed services.
+
+Important services identified included:
+
+* FTP — vsftpd 2.3.4
+* SSH — OpenSSH
+* Telnet
+* HTTP — Apache
+* SMB — Samba
+* MySQL
+* PostgreSQL
+* VNC
+* Apache Tomcat
+
+The service enumeration output was saved as supporting evidence.
+
+### vsftpd 2.3.4 Backdoor
+
+The FTP service was identified as running **vsftpd 2.3.4**.
+
+SearchSploit was used to identify a known vulnerability associated with this version. Metasploit was then used to perform a controlled test against the intentionally vulnerable Metasploitable 2 system.
+
+The test successfully established a command shell.
+
+Privilege verification returned:
+
+```text
+root
+```
+
+The `id` command confirmed UID 0:
+
+```text
+uid=0(root) gid=0(root)
+```
+
+### Impact
+
+Successful exploitation demonstrated that a vulnerable exposed FTP service could result in unauthorized command execution with root-level privileges.
+
+### Remediation
+
+* Upgrade vulnerable software to a supported version.
+* Disable unnecessary services.
+* Restrict administrative services using firewall rules.
+* Apply least-privilege principles.
+* Monitor exposed network services.
+* Perform regular vulnerability assessments.
+
+## 2. Web Application Security Assessment
+
+### DVWA
+
+Damn Vulnerable Web Application (DVWA) was accessed through the Metasploitable 2 web server.
+
+DVWA was configured to **Low** security level to allow controlled security testing.
+
+### SQL Injection
+
+The DVWA SQL Injection functionality was tested using controlled input.
+
+Normal input returned an individual database record.
+
+A crafted SQL injection payload caused multiple database records to be returned.
+
+The browser's Network Developer Tools were also used to inspect the request containing the supplied input.
+
+### Impact
+
+SQL injection can allow manipulation of database queries and may result in unauthorized access to database information depending on the application's implementation and database privileges.
+
+### Remediation
+
+* Use parameterized queries and prepared statements.
+* Avoid constructing SQL queries directly from user input.
+* Validate user input appropriately.
+* Apply least-privilege database permissions.
+* Implement secure error handling.
+* Perform regular application security testing.
+
+### Reflected Cross-Site Scripting (XSS)
+
+The DVWA Reflected XSS functionality was tested using controlled JavaScript input.
+
+The supplied JavaScript executed in the browser and generated a JavaScript alert, demonstrating reflected XSS behavior.
+
+### Impact
+
+Reflected XSS can allow attacker-controlled JavaScript to execute within a victim's browser context when the victim interacts with a maliciously crafted request or link.
+
+Depending on the application, this can potentially be used for phishing interfaces, session-relate
